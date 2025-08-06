@@ -20,8 +20,8 @@ net.bridge.bridge-nf-call-ip6tables = 1
 EOF'
 sudo sysctl --system
 
-# 设置主节点名称
-sudo hostnamectl set-hostname master-node
+# 设置从节点名称
+sudo hostnamectl set-hostname worker-node
 
 # 安装必要工具
 sudo dnf install -y dnf-utils curl
@@ -104,42 +104,3 @@ sudo tar Cxzvf /usr/local /root/buildkit-v0.12.5.linux-amd64.tar.gz
 chmod +x /usr/local/bin/buildctl
 buildctl --version
 
-
-# 查看 kubeadm 要用哪些镜像
-kubeadm config images list --kubernetes-version v1.29.15
-
-# 镜像准备：使用 nerdctl 登录阿里云镜像仓库，为了防止与 docker 登录冲突，先删除凭据文件再用 nerdctl 登录。
-rm -f ~/.docker/config.json
-echo "zxj201328" | nerdctl login --username=472493922@qq.com crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com --password-stdin
-nerdctl -n k8s.io pull crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/kube-apiserver:v1.29.15
-nerdctl -n k8s.io pull crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/kube-controller-manager:v1.29.15
-nerdctl -n k8s.io pull crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/kube-scheduler:v1.29.15
-nerdctl -n k8s.io pull crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/kube-proxy:v1.29.15
-nerdctl -n k8s.io pull crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/pause:3.9
-nerdctl -n k8s.io pull crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/etcd:3.5.16-0
-nerdctl -n k8s.io pull crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/coredns:v1.11.1
-nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/kube-apiserver:v1.29.15 registry.k8s.io/kube-apiserver:v1.29.15
-nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/kube-controller-manager:v1.29.15 registry.k8s.io/kube-controller-manager:v1.29.15
-nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/kube-scheduler:v1.29.15 registry.k8s.io/kube-scheduler:v1.29.15
-nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/kube-proxy:v1.29.15 registry.k8s.io/kube-proxy:v1.29.15
-nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/pause:3.9 registry.k8s.io/pause:3.9
-nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/etcd:3.5.16-0 registry.k8s.io/etcd:3.5.16-0
-nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/coredns:v1.11.1 registry.k8s.io/coredns/coredns:v1.11.1
-nerdctl -n k8s.io images
-
-# 初始化 Kubernetes 主节点
-sudo kubeadm init \
-  --kubernetes-version v1.29.15 \
-  --pod-network-cidr=10.244.0.0/16 \
-  --ignore-preflight-errors=NumCPU,Mem \
-  -v=6
-
-# root 用户操作主节点
-export KUBECONFIG=/etc/kubernetes/admin.conf
-# 非 root 用户操作主节点
-# mkdir -p $HOME/.kube
-# sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-# sudo chown $(id -u):$(id -g) $HOME/.kube/config
-
-# 安装 Flannel 网络插件
-kubectl apply -f /root/kube-flannel.yml
