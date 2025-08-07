@@ -39,4 +39,4 @@ do
     sshpass -p "$PASSWORD" rsync -avz "$DOWNLOAD_DIR/$file" "$REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH"
 done
 
-echo "✅ 所有文件已成功上传至 $REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH"
+echo "所有文件已成功上传至 $REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH"

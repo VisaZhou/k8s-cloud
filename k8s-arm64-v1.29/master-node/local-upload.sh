@@ -3,7 +3,7 @@
 # ========== 配置 ==========
 REMOTE_USER="root"
 REMOTE_HOST="113.44.50.184"
-REMOTE_PATH="/root/"
+REMOTE_PATH="/root"
 PASSWORD="Zxj201328"
 DOWNLOAD_DIR="/Users/zhouxujin/Downloads"
 
@@ -36,7 +36,7 @@ echo "上传所有文件到远程服务器 $REMOTE_HOST:$REMOTE_PATH ..."
 for file in containerd-1.7.15-linux-amd64.tar.gz containerd.service runc nerdctl-1.7.6-linux-amd64.tar.gz buildkit-v0.12.5.linux-amd64.tar.gz kube-flannel.yml
 do
     echo "→ 上传 $file"
-    sshpass -p "$PASSWORD" rsync -avz "$DOWNLOAD_DIR/$file" "$REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH"
+    sshpass -p "$PASSWORD" rsync -avz "$DOWNLOAD_DIR/$file" "$REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH/"
 done
 
-echo "✅ 所有文件已成功上传至 $REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH"
+echo "所有文件已成功上传至 $REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH"

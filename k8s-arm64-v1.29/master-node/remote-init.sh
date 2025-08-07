@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# ========== 配置 ==========
+MASTER_NAME="master-node"
+SOURCE_PATH="/root"
+
 # 关闭 Swap
 sudo swapoff -a
 sudo sed -i '/ swap / s/^/#/' /etc/fstab
@@ -21,7 +25,7 @@ EOF'
 sudo sysctl --system
 
 # 设置主节点名称
-sudo hostnamectl set-hostname master-node
+sudo hostnamectl set-hostname "$MASTER_NAME"
 
 # 安装必要工具
 sudo dnf install -y dnf-utils curl
@@ -49,8 +53,8 @@ sudo systemctl enable --now kubelet
 
 
 # 安装 containerd（k8s 从 1.24版本开始默认不使用 docker，而是直接使用底层的 containerd）
-sudo tar Cxzvf /usr/local /root/containerd-1.7.15-linux-amd64.tar.gz
-sudo mv /root/containerd.service /usr/lib/systemd/system/containerd.service
+sudo tar Cxzvf /usr/local "$SOURCE_PATH/containerd-1.7.15-linux-amd64.tar.gz"
+sudo mv "$SOURCE_PATH/containerd.service" /usr/lib/systemd/system/containerd.service
 # 重新加载 systemd 管理器配置
 sudo systemctl daemon-reexec
 sudo systemctl daemon-reload
@@ -91,16 +95,16 @@ containerd --version
 # 手动更新 containerd 中的 runc 版本，以支持现代 Linux 功能
 which runc
 cp /usr/bin/runc /usr/bin/runc.bak
-install -m 755 /root/runc /usr/bin/runc
+install -m 755 "$SOURCE_PATH/runc" /usr/bin/runc
 runc --version
 
 # 安装 nerdctl（nerdctl 是 containerd 的官方兼容工具，提供类似 Docker 的 CLI 体验）
-sudo tar Cxzvf /usr/local/bin /root/nerdctl-1.7.6-linux-amd64.tar.gz
+sudo tar Cxzvf /usr/local/bin "$SOURCE_PATH/nerdctl-1.7.6-linux-amd64.tar.gz"
 chmod +x /usr/local/bin/nerdctl
 nerdctl --version
 
 # 安装 buildkit （buildkit 是 containerd 的官方构建工具，提供类似 Docker Build 的功能）
-sudo tar Cxzvf /usr/local /root/buildkit-v0.12.5.linux-amd64.tar.gz
+sudo tar Cxzvf /usr/local "$SOURCE_PATH/buildkit-v0.12.5.linux-amd64.tar.gz"
 chmod +x /usr/local/bin/buildctl
 buildctl --version
 
@@ -142,4 +146,4 @@ export KUBECONFIG=/etc/kubernetes/admin.conf
 # sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 # 安装 Flannel 网络插件
-kubectl apply -f /root/kube-flannel.yml
+kubectl apply -f "$SOURCE_PATH/kube-flannel.yml"
