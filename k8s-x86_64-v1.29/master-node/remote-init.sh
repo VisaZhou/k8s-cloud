@@ -143,6 +143,10 @@ nerdctl -n k8s.io pull crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.co
 nerdctl -n k8s.io pull crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/pause:3.9
 nerdctl -n k8s.io pull crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/etcd:3.5.16-0
 nerdctl -n k8s.io pull crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/coredns:v1.11.1
+nerdctl -n k8s.io pull crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/flannel-cni-plugin:v1.4.0-flannel1
+nerdctl -n k8s.io pull crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/flannel:v0.25.1
+
+# 给镜像重新打标签
 nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/kube-apiserver:v1.29.15 registry.k8s.io/kube-apiserver:v1.29.15
 nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/kube-controller-manager:v1.29.15 registry.k8s.io/kube-controller-manager:v1.29.15
 nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/kube-scheduler:v1.29.15 registry.k8s.io/kube-scheduler:v1.29.15
@@ -151,6 +155,8 @@ nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com
 nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/pause:3.9 registry.k8s.io/pause:3.8
 nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/etcd:3.5.16-0 registry.k8s.io/etcd:3.5.16-0
 nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/coredns:v1.11.1 registry.k8s.io/coredns/coredns:v1.11.1
+nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/flannel-cni-plugin:v1.4.0-flannel1 docker.io/flannel/flannel-cni-plugin:v1.4.0-flannel1
+nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/flannel:v0.25.1 docker.io/flannel/flannel:v0.25.1
 nerdctl -n k8s.io images
 
 # 初始化 Kubernetes 主节点 (默认使用内网IP地址, 如果需要指定公网地址，请使用 --apiserver-advertise-address 参数)

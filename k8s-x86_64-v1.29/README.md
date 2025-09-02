@@ -18,9 +18,19 @@
 
 注意：此 IP 为临时生效，重启后失效。如需永久生效，请配置网络脚本或 NetworkManager。
 
+### 主节点示例：
 ```bash
 # 使用 root 用户执行
-ip addr add 117.72.125.176/32 dev eth0
+ip addr add <主节点公网IP>/32 dev eth0
+
+# 验证 IP 是否生效
+ip addr show eth0
+```
+
+### 工作节点示例：
+```bash
+# 使用 root 用户执行
+ip addr add <工作节点公网IP>/32 dev eth0
 
 # 验证 IP 是否生效
 ip addr show eth0
