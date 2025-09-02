@@ -4,12 +4,19 @@
 ### 主节点
 本地先挂代理，执行 `/master-node/local-upload.sh` 脚本，下载并上传文件
 
+上传初始化脚本到主节点服务器 `/master-node/remote-init.sh`
+
 登录主节点服务器，执行 `/master-node/remote-init.sh` 脚本安装环境
+
+`/master-node/remote-clean.sh` 为清理脚本
+
 
 ### 工作节点
 本地先挂代理，执行 `/worker-node/local-upload.sh` 脚本，下载并上传文件
 
 登录工作节点服务器，执行 `/worker-node/remote-init.sh` 脚本安装环境
+
+`/master-node/remote-clean.sh` 为清理脚本
 
 ### 将工作节点加入主节点所初始化的集群中
 
