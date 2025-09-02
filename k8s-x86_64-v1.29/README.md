@@ -81,3 +81,12 @@ sudo PATH=$PATH kubeadm join 117.72.125.176:6443 --token 6456o0.2ucadutxp7fj6bq5
 ```bash
 kubectl get nodes
 ```
+
+### 将已经加入的工作节点去除出集群
+登录主节点执行以下命令
+```bash
+# 查看节点名
+kubectl get nodes
+# 删除 Kubernetes 的注册信息，不会影响节点本身的 kubelet 配置。
+kubectl delete node <节点名称>
+```

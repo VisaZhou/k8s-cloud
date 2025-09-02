@@ -127,3 +127,20 @@ nerdctl --version
 sudo tar -C ${BIN_PATH} -xzvf "${SOURCE_PATH}/buildkit-v0.12.5.linux-amd64.tar.gz"
 sudo chmod +x ${BIN_PATH}/bin/buildctl
 buildctl --version
+
+# 镜像准备：使用 nerdctl 登录阿里云镜像仓库，为了防止与 docker 登录冲突，先删除凭据文件再用 nerdctl 登录。
+rm -f ~/.docker/config.json
+echo "zxj201328" | nerdctl login --username=472493922@qq.com crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com --password-stdin
+nerdctl -n k8s.io pull crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/kube-proxy:v1.29.15
+nerdctl -n k8s.io pull crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/pause:3.9
+nerdctl -n k8s.io pull crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/flannel-cni-plugin:v1.4.0-flannel1
+nerdctl -n k8s.io pull crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/flannel:v0.25.1
+
+# 给镜像重新打标签
+nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/kube-proxy:v1.29.15 registry.k8s.io/kube-proxy:v1.29.15
+nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/pause:3.9 registry.k8s.io/pause:3.9
+nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/pause:3.9 registry.k8s.io/pause:3.8
+nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/flannel-cni-plugin:v1.4.0-flannel1 docker.io/flannel/flannel-cni-plugin:v1.4.0-flannel1
+nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/flannel:v0.25.1 docker.io/flannel/flannel:v0.25.1
+nerdctl -n k8s.io images
+
