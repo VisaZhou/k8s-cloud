@@ -4,6 +4,7 @@ export PATH=$PATH:/usr/local/bin
 
 # ========== 配置 ==========
 MASTER_NAME="master-node"
+MASTER_HOST="117.72.125.176"
 SOURCE_PATH="/root"
 BIN_PATH="/usr/local"
 SYS_BIN_PATH="/usr/bin"
@@ -152,9 +153,10 @@ nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com
 nerdctl -n k8s.io tag crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/coredns:v1.11.1 registry.k8s.io/coredns/coredns:v1.11.1
 nerdctl -n k8s.io images
 
-# 初始化 Kubernetes 主节点
+# 初始化 Kubernetes 主节点 (默认使用内网IP地址, 如果需要指定公网地址，请使用 --apiserver-advertise-address 参数)
 sudo env "PATH=$PATH" kubeadm init \
   --kubernetes-version v1.29.15 \
+  --apiserver-advertise-address=${MASTER_HOST} \
   --pod-network-cidr=10.244.0.0/16 \
   --ignore-preflight-errors=NumCPU,Mem \
   -v=6

@@ -1,4 +1,38 @@
-## 服务器安装 k8s 环境
+# Kubernetes 集群部署指南（CentOS 8.2 公网访问节点）
+
+本文档描述了在 CentOS 8.2 服务器上部署 Kubernetes 集群的步骤，包括主节点和工作节点初始化、节点加入集群等流程。
+
+
+## 1. 前置要求
+
+- 所有节点可通过公网互相访问
+- 服务器操作系统为 **CentOS 8.2**
+- 具有 root 权限或 sudo 权限
+- 本地已配置代理（如需要下载 Kubernetes 组件或镜像）
+
+---
+
+## 2. 公网 IP 配置
+
+在所有节点上临时添加公网 IP（主节点和工作节点都需执行）：
+
+注意：此 IP 为临时生效，重启后失效。如需永久生效，请配置网络脚本或 NetworkManager。
+
+```bash
+# 使用 root 用户执行
+ip addr add 117.72.125.176/32 dev eth0
+
+# 验证 IP 是否生效
+ip addr show eth0
+```
+---
+
+## 3. 服务器初始化
+
+### centos 8.2 服务器初始化
+执行脚本 `/centos8-update/update-repo.sh`，更新系统仓库
+
+执行脚本 `/centos8-update/vim-font-init.sh`，安装 vim 字体
 
 
 ### 主节点
@@ -25,12 +59,12 @@
 kubeadm token create --print-join-command
 
 # 输出
-# kubeadm join 192.168.0.66:6443 --token emy5v6.g4d2b217z6at8s8b --discovery-token-ca-cert-hash sha256:0fe1f29a9f25248260a09c60fe1cd10809cc3c1be80977aadea672cc8aae3547
+# kubeadm join 117.72.125.176:6443 --token 6456o0.2ucadutxp7fj6bq5 --discovery-token-ca-cert-hash sha256:fcffc33d0f7a2894e27a5c07f673bd39764b44e97cb14293e566d3e1294a927e
 ```
 
 登录工作节点执行以下命令，用主节点中获取的 token 加入集群
 ```bash
-sudo kubeadm join 113.44.50.184:6443 --token emy5v6.g4d2b217z6at8s8b --discovery-token-ca-cert-hash sha256:0fe1f29a9f25248260a09c60fe1cd10809cc3c1be80977aadea672cc8aae3547
+sudo PATH=$PATH kubeadm join 117.72.125.176:6443 --token 6456o0.2ucadutxp7fj6bq5 --discovery-token-ca-cert-hash sha256:fcffc33d0f7a2894e27a5c07f673bd39764b44e97cb14293e566d3e1294a927e
 ```
 
 验证工作节点是否加入成功

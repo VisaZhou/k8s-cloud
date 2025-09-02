@@ -24,7 +24,9 @@ echo "[INFO] 杀掉残留 Kubernetes 进程 ..."
 K8S_PIDS=$(sudo lsof -ti:6443)
 if [ -n "$K8S_PIDS" ]; then
     echo "[INFO] 检测到 kube-apiserver 占用 6443 端口，PID: $K8S_PIDS"
-    sudo kill -9 "$K8S_PIDS"
+    for pid in $K8S_PIDS; do
+        sudo kill -9 "$pid"
+    done
     sleep 2
 fi
 
