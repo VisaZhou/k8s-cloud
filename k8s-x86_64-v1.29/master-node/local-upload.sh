@@ -5,7 +5,7 @@ REMOTE_USER="root"
 REMOTE_HOST="117.72.125.176"
 REMOTE_PATH="/root"
 PASSWORD="Zxj201328"
-DOWNLOAD_DIR="/Users/zhouxujin/Downloads"
+DOWNLOAD_DIR="/Users/zhouxujin/Documents/zhouxujin/personal/k8s-plugins"
 
 K8S_VERSION="v1.29.15"
 
@@ -26,6 +26,7 @@ FILES=(
 "buildkit-v0.12.5.linux-amd64.tar.gz"
 "kube-flannel.yml"
 "crictl-v1.27.0-linux-amd64.tar.gz"
+"cni-plugins-linux-amd64-v1.3.0.tgz"
 )
 
 URLS=(
@@ -39,6 +40,7 @@ URLS=(
 "https://github.com/moby/buildkit/releases/download/v0.12.5/buildkit-v0.12.5.linux-amd64.tar.gz"
 "https://raw.githubusercontent.com/flannel-io/flannel/v0.25.1/Documentation/kube-flannel.yml"
 "https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.27.0/crictl-v1.27.0-linux-amd64.tar.gz"
+"https://github.com/containernetworking/plugins/releases/download/v1.3.0/cni-plugins-linux-amd64-v1.3.0.tgz"
 )
 
 for i in "${!FILES[@]}"; do

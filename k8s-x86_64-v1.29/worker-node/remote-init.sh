@@ -128,6 +128,11 @@ sudo tar -C ${BIN_PATH} -xzvf "${SOURCE_PATH}/buildkit-v0.12.5.linux-amd64.tar.g
 sudo chmod +x ${BIN_PATH}/bin/buildctl
 buildctl --version
 
+# 安装网络插件 CNI
+sudo tar -C /opt/cni/bin -xzvf "/root/cni-plugins-linux-amd64-v1.3.0.tgz"
+sudo chmod +x /opt/cni/bin/*
+ls -l /opt/cni/bin
+
 # 镜像准备：使用 nerdctl 登录阿里云镜像仓库，为了防止与 docker 登录冲突，先删除凭据文件再用 nerdctl 登录。
 rm -f ~/.docker/config.json
 echo "zxj201328" | nerdctl login --username=472493922@qq.com crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com --password-stdin
