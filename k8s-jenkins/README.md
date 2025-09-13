@@ -14,11 +14,11 @@ image:
   repository:
   tag:
 
-imagePullSecretName:
+imagePullSecretName: regcred
 
 persistence:
-  enabled: 
-  storageClass: 
-  size:
+  enabled: true
+  storageClass: nfs-client
+  size: 16Gi
 ```
 
