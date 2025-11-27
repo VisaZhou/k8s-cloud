@@ -9,16 +9,41 @@
 
 ## values.yaml 里需修改的关键配置
 ```yml
-image:
-  registry:
-  repository:
-  tag:
+controller:
+  image:
+    registry: "crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com"
+    repository: "visage-namespace/jenkins"
+    tag: "lts"
 
-imagePullSecretName: regcred
+  imagePullSecretName: regcred
+
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "1Gi"
+    limits:
+      cpu: "2000m"
+      memory: "2Gi"
+
+  javaOpts: "-Xms1024m -Xmx2048m"
+
+  probes:
+    startupProbe:
+      failureThreshold: 120
 
 persistence:
   enabled: true
   storageClass: nfs-client
-  size: 16Gi
+  accessMode: "ReadWriteOnce"
+  size: "16Gi"
 ```
 
+## 常见问题
+### 组合状态 Init:1/2 是什么意思？
+1. 以下表示 Pod 里面一共有 2 个容器（2/2），但当前 0 个容器是 Ready 状态（0/2）。
+2. Init:1/2 表示有一个 Init 容器还没完成初始化（Init 容器是主容器启动前运行的特殊容器，通常用来做一些准备工作）。
+3. 如果要查看 Init 容器的日志，可以用以下命令：`kubectl logs helm-jenkins-0 -c init`
+```bash
+NAME                                                              READY   STATUS     RESTARTS      AGE
+helm-jenkins-0                                                    0/2     Init:1/2   0             45s
+```
