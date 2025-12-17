@@ -4,46 +4,70 @@
 ```yml
 image:
   registry: "crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com"
-  repository: "visage-namespace/traefik:3.0"
-  tag:
+  repository: "visage-namespace/traefik"
+  tag: "3.0"
   pullPolicy: IfNotPresent
 ```
 
 ### Secret
 ```yml
-# 拉取镜像的 Secret
-imagePullSecrets:
-  - name: regcred
+deployment:
+  # 拉取镜像的 Secret
+  imagePullSecrets:
+    - name: regcred
 ```
 
 ### 端口
-
-
-| 端口类型                                      | 容器内端口 | k8s Service 暴露的端口 | 互联网访问端口  |
-|-------------------------------------------|-------|-------------------|---|
-| Dashboard 端口         |port：8080       | 不需要暴露，靠流量入口转发     |   |
-| 流量入口/HTTP      | port：80      | exposedPort：28000                  | nodePort：28000  |
-| 流量入口/HTTPS（暂不需要） | port：443      |                   |   |
-| Prometheus 指标（暂不需要）  | port：9100      |                   |   |
+| 端口类型                                      | 容器内端口 | k8s Service 集群内部端口 | NodePort端口：集群外访问，范围 30000 – 32767|
+|-------------------------------------------|-------|--------------------|---------------------|
+| Dashboard 端口         |port：8080       | 不需要暴露，靠流量入口转发      |                     |
+| 流量入口/HTTP      | port：80      | exposedPort：30000  | nodePort：30000      |
+| 流量入口/HTTPS（暂不需要） | port：443      |                    |                     |
+| Prometheus 指标（暂不需要）  | port：9100      |                    |                     |
 
 只需要修改流量入口，其他配置不变：
 ```yml
 ports:
+  # 流量入口
   web:
+    # 容器内端口
     port: 8000
+    # 暴露到 k8s Service 的端口:30000
     expose:
       default: true
-    exposedPort: 28000
+    exposedPort: 30000
     protocol: TCP
-    nodePort: 28000
+    # 把 k8s Service 的端口:30000 暴露到宿主机的端口:30000
+    # 注意：NodePort端口的范围为：30000 – 32767
+    nodePort: 30000
 ```
 
 ### service
-定义类型为：NodePort
 ```yml
+# 定义类型为：NodePort
 service:
   enabled: true
   type: NodePort
+```
+
+### IngressRoute
+```yml
+ingressRoute:
+  # 路由匹配 Dashboard
+  dashboard:
+    enabled: true
+    annotations: {}
+    labels: {}
+    # 当请求路径以 /dashboard 或 /api 开头时，这条路由生效
+    matchRule: PathPrefix(`/dashboard`) || PathPrefix(`/api`)
+    # 指定流量要转发到的服务
+    services:
+      - name: api@internal
+        kind: TraefikService
+    # 指定流量入口
+    entryPoints: ["web"]
+    middlewares: []
+    tls: {}
 ```
 
 
@@ -61,4 +85,14 @@ persistence:
   path: /data
   annotations: {}
   subPath: ""
+```
+
+
+### 访问
+使用主节点IP + NodePort端口访问
+```bash
+http://117.72.125.176:30000/
+
+# 返回如下，证明部署成功
+404 page not found
 ```

@@ -2,13 +2,9 @@
 # 镜像
 image:
   registry: "crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com"
-  repository: "visage-namespace/traefik:3.0"
-  tag:
+  repository: "visage-namespace/traefik"
+  tag: "3.0"
   pullPolicy: IfNotPresent
-
-# 拉取镜像的 Secret
-imagePullSecrets:
-  - name: regcred
 
 # 使用证书时才需要挂载pvc，此处不需要配置
 persistence:
@@ -48,7 +44,9 @@ deployment:
   dnsPolicy: ""
   dnsConfig: {}
   hostAliases: []
-  imagePullSecrets: []
+  # 拉取镜像的 Secret
+  imagePullSecrets:
+    - name: regcred
   lifecycle: {}
   runtimeClassName: ""
   goMemLimitPercentage: 0.9
@@ -102,14 +100,14 @@ api:
 
 ingressRoute:
   dashboard:
-    enabled: false
+    enabled: true
     annotations: {}
     labels: {}
     matchRule: PathPrefix(`/dashboard`) || PathPrefix(`/api`)
     services:
       - name: api@internal
         kind: TraefikService
-    entryPoints: ["traefik"]
+    entryPoints: ["web"]
     middlewares: []
     tls: {}
   healthcheck:
@@ -419,10 +417,10 @@ ports:
     port: 8000
     expose:
       default: true
-    exposedPort: 28000
+    exposedPort: 30000
     targetPort:  
     protocol: TCP
-    nodePort: 28000
+    nodePort: 30000
     redirections:
       entryPoint: {}
     forwardedHeaders:
@@ -454,7 +452,7 @@ ports:
     expose:
       default: true
     exposedPort: 443
-    targetPort:  ; minimum:0
+    targetPort:
     protocol: TCP
     nodePort:  
     appProtocol:
