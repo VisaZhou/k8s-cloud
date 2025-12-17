@@ -91,8 +91,9 @@ persistence:
 ### 访问
 使用主节点IP + NodePort端口访问
 ```bash
-http://117.72.125.176:30000/
-
-# 返回如下，证明部署成功
-404 page not found
+http://117.72.125.176:30000/dashboard/
+```
+使用子节点IP + NodePort端口访问
+```bash
+http://117.72.153.178:30000/dashboard/
 ```
