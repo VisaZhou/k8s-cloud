@@ -16,6 +16,18 @@ controller:
     tag: "lts"
 
   imagePullSecretName: regcred
+  
+  # 用于设置 Jenkins 根路径，配置 IngressRoute 后可通过 /jenkins 访问 Jenkins
+  jenkinsUriPrefix: "/jenkins"
+  
+  # 用于设置 Jenkins 初始管理员用户名和密码
+  admin:
+    username: "visage"
+    password: "zxj201328"
+  
+  # 设置 Jenkins Controller 不执行任何任务，所有任务都交给 Agent 执行。如果 numExecutors > 0，则 Controller 也会执行任务，导致负载高
+  # Kubernetes Agent 是“用完即丢”的，每个 Pipeline = 新 Pod
+  numExecutors: 0
 
   resources:
     requests:
@@ -38,12 +50,85 @@ persistence:
   size: "16Gi"
 ```
 
+## 启动 Jenkins 和 IngressRoute
+```bash
+# 启动 Jenkins
+helm upgrade --install helm-jenkins ./helm-jenkins
+# 启动 IngressRoute
+kubectl apply -f jenkins-ingressroute.yaml
+```
+
+配置完 IngressRoute 后，访问 Jenkins 地址及密码
+```txt
+- 地址：http://117.72.125.176:30000/jenkins/
+- 用户名：visage
+- 初始密码：zxj201328
+- 初始密码查看：kubectl exec -it svc/helm-jenkins -c jenkins -- cat /run/secrets/additional/chart-admin-password
+```
+
+
 ## 常见问题
-### 组合状态 Init:1/2 是什么意思？
-1. 以下表示 Pod 里面一共有 2 个容器（2/2），但当前 0 个容器是 Ready 状态（0/2）。
-2. Init:1/2 表示有一个 Init 容器还没完成初始化（Init 容器是主容器启动前运行的特殊容器，通常用来做一些准备工作）。
-3. 如果要查看 Init 容器的日志，可以用以下命令：`kubectl logs helm-jenkins-0 -c init`
+```txt
+- 以下表示 Pod 里面一共有 2 个容器（2/2），但当前 0 个容器是 Ready 状态（0/2）。
+- Init:1/2 表示有一个 Init 容器还没完成初始化（Init 容器是主容器启动前运行的特殊容器，通常用来做一些准备工作）。
+- 如果要查看 Init 容器的日志，可以用以下命令：kubectl logs helm-jenkins-0 -c init
+```
+组合状态 Init:1/2 是什么意思？
 ```bash
 NAME                                                              READY   STATUS     RESTARTS      AGE
 helm-jenkins-0                                                    0/2     Init:1/2   0             45s
 ```
+
+## 插件安装
+```txt
+1. 进入 Manage Jenkins -> Plugins -> Available plugins。
+2. 搜索并安装以下插件：
+- Workspace Cleanup
+```
+
+## Jenkins 配置参考
+jenkins 新建 item 之后才能新建 view,并且把 item 加入 view。
+
+构建 java-mvn-agent，上传阿里云镜像仓库。
+```bash
+sh ../visage-agent/jdk21-mvn3.9.9/deploy.sh
+```
+
+配置 kubernetes cloud
+```txt
+- Manage Jenkins -> cloud -> Add a new cloud -> Kubernetes -> Pod Template。
+- Add a pod template -> Name: jdk-mvn-agent -> Labels：jdk-mvn-agent -> 命名空间: default。
+- Container Template -> Name: jnlp -> Docker Image: crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-build/jdk-mvn-agent:21-3.9.9。
+- Container Template -> 工作目录: /home/jenkins/agent --> 运行的命令：空 --> 命令参数：空。
+- 拉取镜像的 Secret: regcred  （和 k8s 中拉取镜像的 Secret 一致,  kubectl get secret）。
+- 保存。
+```
+
+
+## Jenkins 流水线
+环境检测
+```text
+pipeline {
+    agent { 
+        label 'jdk-mvn-agent' 
+    }
+    stages {
+        stage('检测环境') {
+            steps {
+                echo '检测环境'
+                sh '''
+                    git version
+                    java -version
+                    mvn -v
+                '''
+            }
+        }
+        stage('清理工作空间') {
+            steps {
+                cleanWs()
+            }
+        }
+    }
+}
+```
+

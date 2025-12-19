@@ -212,7 +212,7 @@ imagePullSecrets:
 本地 kubectl 切到服务器 k8s 环境安装 nfs-subdir-external-provisioner，注意：helm 执行远程部署命令时，指定的 chart 地址为本地 mac 路径。
 ```bash
 kubectl config use-context kubernetes-admin@kubernetes
-helm install nfs-provisioner /Users/zhouxujin/Documents/zhouxujin/personal/k8s-cloud/k8s-x86_64-v1.29/nfs-subdir-external-provisioner \
+helm install nfs-provisioner /Users/zhouxujin/Documents/zhouxujin/personal/k8s-cloud/init/k8s-x86_64-v1.29/nfs-subdir-external-provisioner \
   --set nfs.server=<NFS服务器IP> \
   --set nfs.path=/data/nfs
 ```
