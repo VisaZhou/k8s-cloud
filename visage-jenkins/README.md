@@ -80,11 +80,15 @@ helm-jenkins-0                                                    0/2     Init:1
 ```
 
 ## 插件安装
-```txt
-1. 进入 Manage Jenkins -> Plugins -> Available plugins。
-2. 搜索并安装以下插件：
-- Workspace Cleanup
-```
+进入 Manage Jenkins -> Plugins -> Available plugins，搜索并安装以下插件：
+
+| 插件              | 作用                      |
+|-----------------|-------------------------|
+| Workspace Cleanup | 可以使用 cleanWs() 函数清理工作空间 |
+|                 |                         |
+|                 |                         |
+|                 |                         |
+
 
 ## Jenkins 配置参考
 jenkins 新建 item 之后才能新建 view,并且把 item 加入 view。
