@@ -1,0 +1,275 @@
+image:
+  repository: crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/nexus3
+  tag: latest
+  digest:
+  pullPolicy: IfNotPresent
+
+bashImage:
+  repository: crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/bash
+  tag: latest
+  digest:
+  pullPolicy: IfNotPresent
+
+jdkImage:
+  repository: crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/eclipse-temurin
+  tag: 21-jdk
+  digest:
+  pullPolicy: IfNotPresent
+
+imagePullSecrets:
+  - name: regcred
+
+nameOverride:
+fullnameOverride:
+commonLabels: {}
+serviceAccount:
+  create: true
+  labels: {}
+  annotations: {}
+  name:
+  automountToken: false
+
+service:
+  type: ClusterIP
+  annotations: {}
+  port: 8081
+  additionalPorts: []
+
+ingress:
+  enabled: false
+  annotations: {}
+  ingressClassName:
+  hosts: []
+  tls: []
+
+replicas: 1
+updateStrategy: {}
+ordinals: {}
+podManagementPolicy:
+minReadySeconds:
+
+podDisruptionBudget:
+  enabled: false
+  minAvailable:
+  maxUnavailable:
+  unhealthyPodEvictionPolicy:
+
+podLabels: {}
+podAnnotations: {}
+automountServiceAccountToken:
+
+podSecurityContext:
+  runAsNonRoot: false
+  fsGroup: 200
+  seccompProfile:
+    type: RuntimeDefault
+
+initNonRootSecurityContext:
+  privileged: false
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 65532
+  runAsGroup: 65532
+  capabilities:
+    drop:
+      - ALL
+
+initRootSecurityContext:
+  privileged: false
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: false
+  runAsUser: 0
+  runAsGroup: 0
+
+priorityClassName:
+terminationGracePeriodSeconds: 120
+
+securityContext:
+  privileged: false
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 200
+  runAsGroup: 200
+  capabilities:
+    drop:
+      - ALL
+
+env: []
+
+startupProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 0
+  periodSeconds: 10
+  timeoutSeconds: 1
+  successThreshold: 1
+  failureThreshold: 180
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 0
+  periodSeconds: 10
+  timeoutSeconds: 1
+  successThreshold: 1
+  failureThreshold: 6
+
+readinessProbe:
+  httpGet:
+    path: /service/rest/v1/status
+    port: http
+  initialDelaySeconds: 0
+  periodSeconds: 60
+  timeoutSeconds: 1
+  successThreshold: 1
+  failureThreshold: 6
+
+persistence:
+  enabled: true
+  annotations: {}
+  accessMode: ReadWriteOnce
+  storageClass: nfs-client
+  size: 30Gi
+  retainDeleted: true
+  retainScaled: true
+
+extraVolumes: []
+extraVolumeMounts: []
+resources: {}
+extraInitContainers: []
+nodeSelector: {}
+affinity: {}
+topologySpreadConstraints: []
+tolerations: []
+
+metrics:
+  enabled: false
+  serviceMonitor:
+    enabled: false
+    additionalLabels: {}
+    endpointConfig: {}
+
+license:
+  enabled: false
+  secret:
+  key: nexus.license
+
+properties: []
+storeProperties: []
+
+logback:
+  maxHistory: 30
+
+tailLogs:
+  resources: {}
+
+install4jAddVmParams: -Xms1024m -Xmx1024m -XX:MaxDirectMemorySize=2048m
+
+caCerts:
+  enabled: false
+  secret:
+
+plugins: []
+chownDataDir: true
+
+rootPassword:
+  secret:
+  key: password
+
+config:
+  enabled: false
+  job:
+    image:
+      repository: docker.io/alpine/k8s
+      tag: 1.31.2
+      digest:
+      pullPolicy: IfNotPresent
+    ttlSecondsAfterFinished: 600
+    nodeSelector: {}
+    affinity: {}
+    tolerations: []
+    annotations: {}
+    podLabels: {}
+    podSecurityContext:
+      runAsNonRoot: false
+      fsGroup: 200
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      privileged: false
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 65532
+      runAsGroup: 65532
+      capabilities:
+        drop:
+          - ALL
+
+  anonymous:
+    enabled: false
+    roles:
+      - nx-anonymous
+      - nx-metrics
+  realms:
+    enabled: false
+    values: []
+
+  blobStores: []
+  cleanup: []
+
+  repoCredentials:
+    enabled: false
+    secret:
+  repos: []
+  privileges: []
+  roles: []
+  users: []
+  ldap:
+    enabled: false
+    name:
+    protocol: ldaps
+    useTrustStore: true
+    connectionTimeoutSeconds: 30
+    connectionRetryDelaySeconds: 300
+    maxIncidentsCount: 3
+    host:
+    port: 636
+    authScheme: simple
+    authUsername:
+    authPassword:
+      secret:
+      key:
+    authRealm:
+    searchBase:
+    userBaseDn:
+    userSubtree: false
+    userObjectClass: user
+    userLdapFilter:
+    userIdAttribute: sAMAccountName
+    userRealNameAttribute: cn
+    userEmailAddressAttribute: email
+    userPasswordAttribute:
+    ldapGroupsAsRoles: false
+    groupType: dynamic
+    userMemberOfAttribute: memberOf
+    groupBaseDn:
+    groupSubtree: false
+    groupObjectClass:
+    groupIdAttribute:
+    groupMemberAttribute:
+    groupMemberFormat:
+  tasks: []
+
+
+manualMaintenanceMode:
+  enabled: false
+  command: ["/bin/bash", "-c"]
+  args: ["while true; do sleep 60; done"]
+
+testResources: false

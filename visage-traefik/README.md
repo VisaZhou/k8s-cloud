@@ -18,12 +18,12 @@ deployment:
 ```
 
 ### 端口
-| 端口类型                                      | 容器内端口 | k8s Service 集群内部端口 | NodePort端口：集群外访问，范围 30000 – 32767|
-|-------------------------------------------|-------|--------------------|---------------------|
-| Dashboard 端口         |port：8080       | 不需要暴露，靠流量入口转发      |                     |
-| 流量入口/HTTP      | port：80      | exposedPort：30000  | nodePort：30000      |
-| 流量入口/HTTPS（暂不需要） | port：443      |                    |                     |
-| Prometheus 指标（暂不需要）  | port：9100      |                    |                     |
+| 端口类型                                      | 容器内端口                                             | k8s Service 集群内部端口                                                | NodePort端口：集群外访问，范围 30000 – 32767                            |
+|-------------------------------------------|---------------------------------------------------|-------------------------------------------------------------------|--------------------------------------------------------------|
+| Dashboard 端口         | port：8080                                         | 不需要暴露，靠流量入口转发                                                     |                                                              |
+| 流量入口/HTTP      | port：8000（dashboard，jenkins）<br/>port：8001（nexus） | exposedPort：30000（dashboard，jenkins）<br/>exposedPort：30001（nexus） | nodePort：30000 （dashboard，jenkins）<br/>nodePort：30001（nexus） |
+| 流量入口/HTTPS（暂不需要） | port：443                                          |                                                                   |                                                              |
+| Prometheus 指标（暂不需要）  | port：9100                                         |                                                                   |                                                              |
 
 只需要修改流量入口，其他配置不变：
 ```yml
@@ -40,6 +40,16 @@ ports:
     # 把 k8s Service 的端口:30000 暴露到宿主机的端口:30000
     # 注意：NodePort端口的范围为：30000 – 32767
     nodePort: 30000
+    
+  # 流量入口（nexus，因为nexus不支持路径匹配，必须是根路径，所以新开一个端口）
+  web-nexus:
+    # 容器内端口
+    port: 8001
+    expose:
+      default: true
+    exposedPort: 30001
+    protocol: TCP
+    nodePort: 30001
 ```
 
 ### service

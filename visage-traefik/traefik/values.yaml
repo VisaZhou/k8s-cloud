@@ -444,6 +444,39 @@ ports:
       accessLogs:  
       tracing:  
       traceVerbosity:
+  # 流量入口（nexus，因为nexus不支持路径匹配，必须是根路径，所以新开一个端口）
+  web-nexus:
+    # 容器内端口
+    port: 8001
+    expose:
+      default: true
+    exposedPort: 30001
+    targetPort:
+    protocol: TCP
+    nodePort: 30001
+    redirections:
+      entryPoint: {}
+    forwardedHeaders:
+      trustedIPs: []
+      insecure: false
+    proxyProtocol:
+      trustedIPs: []
+      insecure: false
+    transport:
+      respondingTimeouts:
+        readTimeout:
+        writeTimeout:
+        idleTimeout:
+      lifeCycle:
+        requestAcceptGraceTimeout:
+        graceTimeOut:
+      keepAliveMaxRequests:
+      keepAliveMaxTime:
+    observability:
+      metrics:
+      accessLogs:
+      tracing:
+      traceVerbosity:
   # Traefik 流量入口/HTTPS（暂不需要）
   websecure:
     port: 8443
