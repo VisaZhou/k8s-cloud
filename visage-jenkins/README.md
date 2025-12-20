@@ -98,7 +98,7 @@ jenkins 新建 item 之后才能新建 view,并且把 item 加入 view。
 sh ../visage-agent/jdk21-mvn3.9.9/deploy.sh
 ```
 
-配置 kubernetes cloud
+配置 kubernetes cloud，设置 agent 模板。
 ```txt
 - Manage Jenkins -> cloud -> Add a new cloud -> Kubernetes -> Pod Template。
 - Add a pod template -> Name: jdk-mvn-agent -> Labels：jdk-mvn-agent -> 命名空间: default。
@@ -108,6 +108,16 @@ sh ../visage-agent/jdk21-mvn3.9.9/deploy.sh
 - 保存。
 ```
 
+配置 Git 凭据
+```txt
+- Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted) -> Add Credentials。
+- Kind: Username with password。
+- Username: 472493922@qq.com。
+- Password: zxj201328!。
+- ID: coding。
+- Description: coding 凭据。
+- 保存。
+```
 
 ## Jenkins 流水线
 环境检测
