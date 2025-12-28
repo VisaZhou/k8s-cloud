@@ -1,1 +1,1 @@
-helm upgrade --install traefik ./traefik
+helm upgrade --install traefik ./traefik -f ./traefik/values.yaml --debug

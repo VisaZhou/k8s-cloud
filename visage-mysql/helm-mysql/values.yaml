@@ -1,0 +1,32 @@
+service:
+  type: ClusterIP
+  port: 3306
+
+ingress:
+  enabled: false
+
+name:
+  container: mysql
+  initContainer:
+  service: mysql-service
+  cluster: mysql
+
+image:
+  container: crpi-iay62pbhw1a58p10.cn-hangzhou.personal.cr.aliyuncs.com/visage-namespace/mysql:8.0
+  initContainer:
+  imagePullPolicy: IfNotPresent
+  replicas: 1
+  imagePullSecret: regcred
+
+persistence:
+  enabled: true
+  # 如果你已经提前建好了 PVC，就写名字；否则留空让 Helm 自动创建
+  existingClaim: ""
+  storageClass: nfs-client
+  accessMode: ReadWriteOnce
+  size: 10Gi
+  mountPath: /var/lib/mysql
+
+# 自定义配置
+env:
+  password: zxj201328  # MySQL root 用户的密码

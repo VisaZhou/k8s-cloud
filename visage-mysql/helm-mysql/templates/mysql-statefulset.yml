@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.name.cluster}}  # StatefulSet 的名称，通常是 MySQL 服务的名称
+spec:
+  serviceName: {{ .Values.name.service}}  # 关联的 headless service 名称，用于网络发现
+  replicas: {{ .Values.image.replicas}}  # 设置 Pod 副本数，这里是 1
+  selector:
+    matchLabels:
+      app: {{ .Values.name.container}}  # 用于选择具有 app: mysql 标签的 Pod
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.name.container}}  # 为 Pod 添加标签 app: mysql
+    spec:
+      containers:
+        - name: {{ .Values.name.container}}  # 容器的名称
+          image: {{ .Values.image.container}}  # MySQL 镜像
+          imagePullPolicy: {{ .Values.image.imagePullPolicy}}  # 如果本地已有镜像则不再拉取
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "{{ .Values.env.password}}"  # MySQL root 用户的密码（生产环境应使用 Secret 管理）
+          ports:
+            - containerPort: {{ .Values.service.port}}  # 容器内部 MySQL 服务的端口
+          volumeMounts:
+            - name: mysql-data
+              mountPath: {{ .Values.persistence.mountPath }} # 挂载数据卷到 /var/lib/mysql
+
+
+      imagePullSecrets:
+        - name: {{ .Values.image.imagePullSecret}} # 如果需要从私有镜像仓库拉取镜像，指定镜像仓库的 Secret
+
+      volumes: # 数据卷来源 PVC
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: {{ default (printf "%s-pvc" .Values.name.cluster) .Values.persistence.existingClaim }}

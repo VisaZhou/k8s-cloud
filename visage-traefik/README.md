@@ -50,6 +50,24 @@ ports:
     exposedPort: 30001
     protocol: TCP
     nodePort: 30001
+
+  tcp-mysql:
+    port: 3306
+    expose:
+      default: true
+    exposedPort: 30306
+    targetPort:
+    protocol: TCP
+    nodePort: 30306
+    
+  web-nacos:
+    port: 8848
+    expose:
+      default: true
+    exposedPort: 30002
+    targetPort:
+    protocol: TCP
+    nodePort: 30002
 ```
 
 ### service
