@@ -541,6 +541,37 @@ ports:
       accessLogs:
       tracing:
       traceVerbosity:
+  grpc-nacos:
+    port: 9848
+    expose:
+      default: true
+    exposedPort: 31002
+    targetPort:
+    protocol: TCP
+    nodePort: 31002
+    redirections:
+      entryPoint: { }
+    forwardedHeaders:
+      trustedIPs: [ ]
+      insecure: false
+    proxyProtocol:
+      trustedIPs: [ ]
+      insecure: false
+    transport:
+      respondingTimeouts:
+        readTimeout:
+        writeTimeout:
+        idleTimeout:
+      lifeCycle:
+        requestAcceptGraceTimeout:
+        graceTimeOut:
+      keepAliveMaxRequests:
+      keepAliveMaxTime:
+    observability:
+      metrics:
+      accessLogs:
+      tracing:
+      traceVerbosity:
   # Traefik 流量入口/HTTPS（暂不需要）
   websecure:
     port: 8443

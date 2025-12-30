@@ -6,9 +6,12 @@ spec:
   selector:
     app: {{ .Values.name.container }}
   ports:
-    - protocol: TCP
+    - name: http
       # Service 在 Kubernetes 集群内部暴露的端口
       port: {{ .Values.service.port }}
       # pod 内部 MySQL 进程监听的端口
       targetPort: {{ .Values.service.port }}
+    - name: grpc
+      port: {{ .Values.service.grpcPort }}
+      targetPort: {{ .Values.service.grpcPort }}
   type: ClusterIP

@@ -1,0 +1,13 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: nacos-grpc
+spec:
+  entryPoints:
+    - grpc-nacos
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: nacos-service
+          port: 9848
+  

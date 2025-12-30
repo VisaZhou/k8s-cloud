@@ -41,16 +41,16 @@ ports:
     # 注意：NodePort端口的范围为：30000 – 32767
     nodePort: 30000
     
-  # 流量入口（nexus，因为nexus不支持路径匹配，必须是根路径，所以新开一个端口）
+  # nexus（nexus，因为nexus不支持路径匹配，必须是根路径，所以新开一个端口）
   web-nexus:
-    # 容器内端口
     port: 8001
     expose:
       default: true
     exposedPort: 30001
     protocol: TCP
     nodePort: 30001
-
+  
+  # mysql
   tcp-mysql:
     port: 3306
     expose:
@@ -59,7 +59,8 @@ ports:
     targetPort:
     protocol: TCP
     nodePort: 30306
-    
+  
+  # nacos  
   web-nacos:
     port: 8848
     expose:
@@ -68,6 +69,14 @@ ports:
     targetPort:
     protocol: TCP
     nodePort: 30002
+  grpc-nacos:
+    port: 9848
+    expose:
+      default: true
+    exposedPort: 31002
+    targetPort:
+    protocol: TCP
+    nodePort: 31002
 ```
 
 ### service
